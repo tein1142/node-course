@@ -6,6 +6,10 @@ const getNotes =  () => 'Hi my name is Tien, I learning node js'
 const addNotes = (title, body) => {
     const notes = loadNotes()
     const duplicateNotes = notes.filter( (note) =>  note.title === title )
+
+    debugger
+
+
     if (duplicateNotes.length === 0) {
         notes.push({
             title: title,
