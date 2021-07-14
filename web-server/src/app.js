@@ -6,7 +6,6 @@ console.log(__dirname)
 console.log(path.join(__dirname, '../public'))
 
 const publicDirectoryPath = path.join(__dirname, '../public')
-const aboutPage = path.join(__dirname,'../public/About')
 app.use(express.static(publicDirectoryPath))
 
 app.get('', (req, res) => {
