@@ -1,21 +1,27 @@
 const express = require('express')
 const path = require('path')
-
+const hbs = require('hbs')
 
 const app = express()
-console.log(__dirname)
-console.log(path.join(__dirname, '../public'))
 
+//define path for Express config
 const publicDirectoryPath = path.join(__dirname, '../public')
+const viewsPath = path.join (__dirname,'../templates/views')
+const partialsPath = path.join(__dirname,'../templates/partials')
+console.log(partialsPath)
 
+// Setup handlebars engine and views location
 app.set('view engine', 'hbs')
+app.set('views', viewsPath)
+hbs.registerPartials(partialsPath)
+// Setup static directory to serve
 app.use(express.static(publicDirectoryPath))
 
 
 app.get('', (req, res) => {
     res.render('index', {
         title: 'Weather App',
-        name: 'Pantavit'
+        name: 'Pantavit Hangnalen'
 
     })
 })
@@ -28,7 +34,9 @@ app.get('/about', (req, res) => {
 
 app.get('/help', (req, res) => {
     res.render('help' ,{
-        helpText: 'This page can help your problem'
+        helpText: 'This page can help your problem',
+        title:'Help',
+        name: 'Pantavit hangnalen'
     })
 })
 app.get('/weather', (req, res) => {
