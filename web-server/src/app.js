@@ -6,8 +6,8 @@ const app = express()
 
 //define path for Express config
 const publicDirectoryPath = path.join(__dirname, '../public')
-const viewsPath = path.join (__dirname,'../templates/views')
-const partialsPath = path.join(__dirname,'../templates/partials')
+const viewsPath = path.join(__dirname, '../templates/views')
+const partialsPath = path.join(__dirname, '../templates/partials')
 console.log(partialsPath)
 
 // Setup handlebars engine and views location
@@ -33,18 +33,36 @@ app.get('/about', (req, res) => {
 })
 
 app.get('/help', (req, res) => {
-    res.render('help' ,{
+    res.render('help', {
         helpText: 'This page can help your problem',
-        title:'Help',
+        title: 'Help',
         name: 'Pantavit hangnalen'
     })
 })
+
 app.get('/weather', (req, res) => {
     res.send({
         forecast: 'It is hot',
         location: 'Bangkok'
     })
 })
+
+// error pages 
+app.get('/help/*', (req, res) => {
+    res.render('404',{
+        title: '404',
+        name: 'Pantavit Heangnalen',
+        errorMessage: 'Help article not found'
+    })
+})
+app.get('*', (req, res) => {
+    res.render('404',{
+        title: '404',
+        name: 'Pantavit Heangnalen',
+        errorMessage: 'Page not found'
+    })
+})
+
 
 app.listen(3000, () => {
     console.log('Server is up on port 3000.')
