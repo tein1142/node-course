@@ -14,13 +14,13 @@ console.log(partialsPath)
 app.set('view engine', 'hbs')
 app.set('views', viewsPath)
 hbs.registerPartials(partialsPath)
-// Setup static directory to serve
+    // Setup static directory to serve
 app.use(express.static(publicDirectoryPath))
 
 
 app.get('', (req, res) => {
     res.render('index', {
-        title: 'Weather App',
+        title: 'Weather',
         name: 'Pantavit Hangnalen'
 
     })
@@ -49,17 +49,17 @@ app.get('/weather', (req, res) => {
 
 // error pages 
 app.get('/help/*', (req, res) => {
-    res.render('404',{
+    res.render('404', {
         title: '404',
         name: 'Pantavit Heangnalen',
-        errorMessage: 'Help article not found'
+        errorMessage: 'Help article not found.'
     })
 })
 app.get('*', (req, res) => {
-    res.render('404',{
+    res.render('404', {
         title: '404',
         name: 'Pantavit Heangnalen',
-        errorMessage: 'Page not found'
+        errorMessage: 'Page not found.'
     })
 })
 
