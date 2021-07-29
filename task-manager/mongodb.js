@@ -4,7 +4,7 @@
 // const MongoClient = mongodb.MongoClient
 // const ObjectID = mongodb.ObjectID
 
-const { MongoClient, ObjectId } = require('mongodb')
+const { MongoClient, ObjectId, Db } = require('mongodb')
 
 const connectionURL = 'mongodb://127.0.0.1:27017'
 const databaseName = 'task-manager'
@@ -20,32 +20,32 @@ MongoClient.connect(connectionURL, { useNewUrlParser: true }, (error, client) =>
 
     const db = client.db(databaseName)
 
-    // db.collection('users').find({ _id: new ObjectId("60feb5fece113616668dbda0") }, (error, user) => {
-    //     if (error) {
-    //         return console.log('Unable to fecth')
-    //     }
-    //     console.log(user)
-    // })
+    //     db.collection('users').updateOne({
+    //         _id: new ObjectId("60feb5ddefe159f3145545eb")
+    //     }, {
+    //         $inc: {
+    //             age: 1
+    //         }
+    //     }).then((result) => {
+    //         console.log(result)
+    //     }).catch(err => {
+    //         console.log(err)
+    //     })
 
-    // db.collection('users').find({ age: 20 }).toArray((error, user) => {
-    //     console.log(user)
-    // })
+    //Challenge
 
-    // db.collection('users').find({ age: 20 }).count((error, count) => {
-    //     console.log(count)
-    // })
 
-    // db.collection('descriptions').findOne({ _id: new ObjectId("60feb10c4ba6cd5d3f8c96f8") }, (error, user) => {
-    //     if (error) {
-    //         return console.log('Unable to fecth')
-    //     }
-    //     console.log(user)
-    // })
 
-    db.collection('descriptions').find({ completed: false }).toArray((error, task) => {
-        if (error) {
-            return console.log('Unable to fecth')
+    db.collection('tasks').updateMany({
+        completed: false
+    }, {
+        $set: {
+            completed: true
         }
-        console.log(task)
+    }, ).then((resolve) => {
+        console.log(resolve)
+    }).catch((reject) => {
+        console.log(reject)
     })
+
 })
