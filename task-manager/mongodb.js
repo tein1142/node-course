@@ -10,8 +10,8 @@ const connectionURL = 'mongodb://127.0.0.1:27017'
 const databaseName = 'task-manager'
 
 const id = new ObjectId()
-console.log(id.id.length)
-console.log(id.toHexString().length)
+    // console.log(id.id.length)
+    // console.log(id.toHexString().length)
 
 MongoClient.connect(connectionURL, { useNewUrlParser: true }, (error, client) => {
     if (error) {
@@ -20,40 +20,32 @@ MongoClient.connect(connectionURL, { useNewUrlParser: true }, (error, client) =>
 
     const db = client.db(databaseName)
 
-    // db.collection('users').insertOne({
-    //     _id: id,
-    //     name: 'Ratajit',
-    //     age: 28
-    // }, (error, result) => {
+    // db.collection('users').find({ _id: new ObjectId("60feb5fece113616668dbda0") }, (error, user) => {
     //     if (error) {
-    //         return console.log('Unable to insert user')
+    //         return console.log('Unable to fecth')
     //     }
-    //     console.log(result.ops)
+    //     console.log(user)
     // })
 
-    //     db.collection('user').insertMany([{
-    //         name: 'Nam',
-    //         age: 21
-    //     }, {
-    //         name: 'Tien',
-    //         age: 20
-    //     }], (error, result) => {
-    //         if (error) {
-    //             return console.log('unable to insert documents!')
-    //         }
-    //         console.log(result.ops)
-    //     })
-
-    // db.collection('descriptions').insertMany([{
-    //     description: 'node.js',
-    //     completed: false
-    // }, {
-    //     description: 'Database SQL',
-    //     completed: true
-    // }], (error, result) => {
-    //     if (error) {
-    //         return console.log('unable to insert documents!')
-    //     }
-    //     console.log(result.ops)
+    // db.collection('users').find({ age: 20 }).toArray((error, user) => {
+    //     console.log(user)
     // })
+
+    // db.collection('users').find({ age: 20 }).count((error, count) => {
+    //     console.log(count)
+    // })
+
+    // db.collection('descriptions').findOne({ _id: new ObjectId("60feb10c4ba6cd5d3f8c96f8") }, (error, user) => {
+    //     if (error) {
+    //         return console.log('Unable to fecth')
+    //     }
+    //     console.log(user)
+    // })
+
+    db.collection('descriptions').find({ completed: false }).toArray((error, task) => {
+        if (error) {
+            return console.log('Unable to fecth')
+        }
+        console.log(task)
+    })
 })
