@@ -8,62 +8,129 @@ const port = process.env.PORT || 3000
 
 app.use(express.json())
 
-app.post('/users', (req, res) => {
+app.post('/users', async(req, res) => {
     const user = new User(req.body)
-    user.save().then(() => {
+    try {
+        await user.save()
         res.status(201).send(user)
-    }).catch((e) => {
+    } catch (e) {
         res.status(400).send(e)
-    })
+    }
+    // user.save().then(() => {
+    //     res.status(201).send(user)
+    // }).catch((e) => {
+    //     res.status(400).send(e)
+    // })
 })
 
-app.get(`/getAllUsers`, (req, res) => {
-    User.find({}).then((users) => {
-        res.send(users)
-    }).catch((e) => {
+app.get(`/getAllUsers`, async(req, res) => {
+    try {
+        const user = await User.find({})
+        res.send(user)
+    } catch (e) {
         res.status(500).send(e)
-    })
+    }
+
+    // User.find({}).then((users) => {
+    //     res.send(users)
+    // }).catch((e) => {
+    //     res.status(500).send(e)
+    // })
 })
 
-app.get('/getUserById/:id', (req, res) => {
+app.get('/getUserById/:id', async(req, res) => {
     const id = req.params.id
-    console.log(id)
-    User.findById(id).then((user) => {
-        if (!user) {
+    try {
+        const userById = await User.findById(id)
+        if (!userById) {
             return res.status(404).send()
         }
-        res.send(user)
-    }).catch((e) => {
+        res.send(userById)
+    } catch (e) {
         res.status(500).send()
-    })
+    }
+
+    // User.findById(id).then((user) => {
+    //     if (!user) {
+    //         return res.status(404).send()
+    //     }
+    //     res.send(user)
+    // }).catch((e) => {
+    //     res.status(500).send()
+    // })
 })
 
-app.post('/tasks', (req, res) => {
-    const task = new Task(req.body)
-    task.save().then(() => {
-        res.status(201).send(task)
-    }).catch((e) => {
-        res.status(400).send(e)
+app.patch('/editUser/:id', async(req, res) => {
+    const updates = Object.keys(req.body)
+    console.log(updates)
+    const allowedUpdates = ['name', 'email', 'password', 'age']
+    const isValidOperation = updates.every((update) => {
+        allowedUpdates.includes(update)
     })
-})
-
-app.get(`/AllTasks`, (req, res) => {
-    Task.find({}).then((tasks) => {
-        res.send(tasks)
-    }).catch((e) => {
-        res.status(500).send(e)
-    })
-})
-
-app.get('/getTaskById/:id', (req, res) => {
+    if (!isValidOperation) {
+        return res.status(404).send('Invalid updates!')
+    }
     const id = req.params.id
-    Task.findById(id).then((task) => {
-        res.send(task)
-    }).catch((e) => {
-        res.send(e)
-    })
+    try {
+        const userById = await User.findByIdAndUpdate(id, req.body, { new: true, runValidators: true })
+        if (!userById) {
+            res.status(404).send('Not found id: ' + id)
+        }
+        userById.save()
+        res.status(202).send(userById)
+    } catch (e) {
+        res.status(500).send()
+    }
 })
 
+app.post('/tasks', async(req, res) => {
+    try {
+        const task = await new Task(req.body)
+        res.status(201).send(task)
+    } catch (e) {
+        res.status(400).send(e)
+    }
+
+    // task.save().then(() => {
+    //     res.status(201).send(task)
+    // }).catch((e) => {
+    //     res.status(400).send(e)
+    // })
+})
+
+app.get(`/AllTasks`, async(req, res) => {
+    try {
+        const tasks = await Task.find({})
+        res.send(tasks)
+    } catch (e) {
+        res.status(500).send(e)
+    }
+
+    // Task.find({}).then((tasks) => {
+    //     res.send(tasks)
+    // }).catch((e) => {
+    //     res.status(500).send(e)
+    // })
+})
+
+app.get('/getTaskById/:id', async(req, res) => {
+    const id = req.params.id
+    try {
+        const taskById = await Task.findById(id)
+        if (!taskById) {
+            new Error(res.status(404).send('Not found task with id: ' + id))
+        }
+        res.send(taskById)
+    } catch (e) {
+        res.send(e)
+    }
+
+    // Task.findById(id).then((task) => {
+    //     res.send(task)
+    // }).catch((e) => {
+    //     res.send(e)
+    // })
+})
 
 
 
