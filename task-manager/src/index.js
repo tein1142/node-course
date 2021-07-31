@@ -1,139 +1,14 @@
 const express = require('express')
 require('./db/mongoose')
-const User = require('./models/user')
-const Task = require('./models/task')
 
+const userRouter = require('./routers/user')
+const taskRouter = require('./routers/task')
 const app = express()
 const port = process.env.PORT || 3000
 
 app.use(express.json())
-
-app.post('/users', async(req, res) => {
-    const user = new User(req.body)
-    try {
-        await user.save()
-        res.status(201).send(user)
-    } catch (e) {
-        res.status(400).send(e)
-    }
-    // user.save().then(() => {
-    //     res.status(201).send(user)
-    // }).catch((e) => {
-    //     res.status(400).send(e)
-    // })
-})
-
-app.get(`/getAllUsers`, async(req, res) => {
-    try {
-        const user = await User.find({})
-        res.send(user)
-    } catch (e) {
-        res.status(500).send(e)
-    }
-
-    // User.find({}).then((users) => {
-    //     res.send(users)
-    // }).catch((e) => {
-    //     res.status(500).send(e)
-    // })
-})
-
-app.get('/getUserById/:id', async(req, res) => {
-    const id = req.params.id
-    try {
-        const userById = await User.findById(id)
-        if (!userById) {
-            return res.status(404).send()
-        }
-        res.send(userById)
-    } catch (e) {
-        res.status(500).send()
-    }
-
-    // User.findById(id).then((user) => {
-    //     if (!user) {
-    //         return res.status(404).send()
-    //     }
-    //     res.send(user)
-    // }).catch((e) => {
-    //     res.status(500).send()
-    // })
-})
-
-app.patch('/editUser/:id', async(req, res) => {
-    const updates = Object.keys(req.body)
-    console.log(updates)
-    const allowedUpdates = ['name', 'email', 'password', 'age']
-    const isValidOperation = updates.every((update) => {
-        allowedUpdates.includes(update)
-    })
-    if (!isValidOperation) {
-        return res.status(404).send('Invalid updates!')
-    }
-    const id = req.params.id
-    try {
-        const userById = await User.findByIdAndUpdate(id, req.body, { new: true, runValidators: true })
-        if (!userById) {
-            res.status(404).send('Not found id: ' + id)
-        }
-        userById.save()
-        res.status(202).send(userById)
-    } catch (e) {
-        res.status(500).send()
-    }
-})
-
-app.post('/tasks', async(req, res) => {
-    try {
-        const task = await new Task(req.body)
-        res.status(201).send(task)
-    } catch (e) {
-        res.status(400).send(e)
-    }
-
-    // task.save().then(() => {
-    //     res.status(201).send(task)
-    // }).catch((e) => {
-    //     res.status(400).send(e)
-    // })
-})
-
-app.get(`/AllTasks`, async(req, res) => {
-    try {
-        const tasks = await Task.find({})
-        res.send(tasks)
-    } catch (e) {
-        res.status(500).send(e)
-    }
-
-    // Task.find({}).then((tasks) => {
-    //     res.send(tasks)
-    // }).catch((e) => {
-    //     res.status(500).send(e)
-    // })
-})
-
-app.get('/getTaskById/:id', async(req, res) => {
-    const id = req.params.id
-    try {
-        const taskById = await Task.findById(id)
-        if (!taskById) {
-            new Error(res.status(404).send('Not found task with id: ' + id))
-        }
-        res.send(taskById)
-    } catch (e) {
-        res.send(e)
-    }
-
-    // Task.findById(id).then((task) => {
-    //     res.send(task)
-    // }).catch((e) => {
-    //     res.send(e)
-    // })
-})
-
-
-
+app.use(userRouter)
+app.use(taskRouter)
 
 
 app.listen(port, () => {
