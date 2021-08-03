@@ -1,7 +1,7 @@
 const express = require('express')
 const router = new express.Router()
 const User = require('../models/user')
-    // const bcrypt = require('bcrypt')
+const auth = require('../midleware/auth')
 router.post('/users', async(req, res) => {
     try {
         const user = await new User(req.body)
@@ -30,7 +30,41 @@ router.post('/users/login', async(req, res) => {
     }
 })
 
-router.get(`/getAllUsers`, async(req, res) => {
+// do it my self
+// router.post('/users/logout', async(req, res) => {
+//     try {
+//         const user = await User.findByCredentials(req.body.email, req.body.password)
+//         await user.deleteAuthToken()
+//         res.send('Logout!')
+//     } catch (e) {
+//         res.send(e)
+//     }
+// })
+
+router.post('/users/logout', auth, async(req, res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter(token => {
+                return token.token !== req.token
+            })
+            // console.log(req.user.tokens)
+            // console.log(req.token)
+        await req.user.save()
+
+        res.send('Logout successful!')
+    } catch (e) {
+        res.status(500).send(e)
+    }
+})
+router.post('/users/logoutAll', auth, async(req, res) => {
+    try {
+        req.user.tokens = []
+        await req.user.save()
+        res.status(200).send('Logout All!')
+    } catch (error) {
+        res.status(500).send(error)
+    }
+})
+router.get(`/getAllUsers`, auth, async(req, res) => {
     try {
         const user = await User.find({})
         res.send(user)
@@ -44,7 +78,10 @@ router.get(`/getAllUsers`, async(req, res) => {
     //     res.status(500).send(e)
     // })
 })
-
+router.get('/users/me', auth, (req, res) => {
+    // console.log(req.user)
+    res.send(req.user)
+})
 router.get('/getUserById/:id', async(req, res) => {
     const id = req.params.id
     try {

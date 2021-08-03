@@ -51,9 +51,15 @@ const userSchema = mongoose.Schema({
 userSchema.methods.generrateAuthToken = async function() {
     const user = this
     const token = jwt.sign({ _id: user.id.toString() }, 'thisismynewcourse')
-    user.tokens = user.tokens.concat({ token })
+    user.tokens.push({ token })
     await user.save()
     return token
+}
+
+userSchema.methods.deleteAuthToken = async function() {
+    const user = this
+    user.tokens.pop({})
+    await user.save()
 }
 
 userSchema.statics.findByCredentials = async(email, password) => {
